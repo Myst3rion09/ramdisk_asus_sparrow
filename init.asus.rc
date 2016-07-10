@@ -1,0 +1,87 @@
+import init.asus.wifi.rc
+
+on early-fs
+    # mount factory
+    mkdir /factory 0660 root shell
+
+on post-fs
+    chmod 0775 /factory
+    chown root shell /factory
+    restorecon_recursive /factory
+
+on post-fs-data
+    # link /factory to /data/asusdata for backward compatibility
+    symlink /factory /data/asusdata
+    chmod 0775 /data/asusdata
+    chown root shell /data/asusdata
+
+    start asus_hw_init
+    start asus_btwifi
+
+on early-boot
+    write /sys/kernel/boot_adsp/boot 1
+
+on boot
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+
+    chown bluetooth bluetooth /proc/bluetooth/sleep/asleep
+    chown bluetooth bluetooth /proc/bluetooth/sleep/btwake
+    chown bluetooth bluetooth /proc/bluetooth/sleep/btwrite
+    chown bluetooth bluetooth /proc/bluetooth/sleep/hostwake
+    chown bluetooth bluetooth /proc/bluetooth/sleep/lpm
+    chown bluetooth bluetooth /proc/bluetooth/sleep/proto
+    chmod 0664 /proc/bluetooth/sleep/asleep
+    chmod 0664 /proc/bluetooth/sleep/btwake
+    chmod 0664 /proc/bluetooth/sleep/btwrite
+    chmod 0664 /proc/bluetooth/sleep/hostwake
+    chmod 0664 /proc/bluetooth/sleep/lpm
+    chmod 0664 /proc/bluetooth/sleep/proto
+
+    setprop ro.rfkilldisabled 0
+    setprop ro.bt.bdaddr_path /factory/bd_addr.conf
+    setprop log.tag.BluetoothSocket DEBUG
+
+service asus_hw_init /system/bin/init.asus.hw.sh
+    class main
+    user root
+    group root system
+    disabled
+    oneshot
+
+service asus_btwifi /system/bin/init.asus.btwifi.sh
+    class main
+    user root
+    group root system
+    disabled
+    oneshot
+
+service asus_lateprop /system/bin/init.asus.lateprop.sh
+    class main
+    user root
+    oneshot
+
+service asus-post-boot /system/bin/init.asus.hw.sh post_boot
+    class late_start
+    user root
+    group root system
+    disabled
+    oneshot
+
+service setup_fs /system/bin/setup_fs \
+    /dev/block/platform/msm_sdcc.1/by-name/userdata \
+    /dev/block/platform/msm_sdcc.1/by-name/cache \
+    /dev/block/platform/msm_sdcc.1/by-name/tombstones
+    class core
+    oneshot
+    seclabel u:r:setup_fs:s0
+
+on property:persist.sys.downloadmode.enable=1
+    write /sys/module/msm_poweroff/parameters/download_mode 1
+
+on property:persist.sys.downloadmode.enable=0
+    write /sys/module/msm_poweroff/parameters/download_mode 0
+
+on property:sys.boot_completed=1
+    start asus-post-boot

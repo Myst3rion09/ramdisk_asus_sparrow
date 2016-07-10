@@ -1,0 +1,28 @@
+#
+# ADDITIONAL_DEFAULT_PROPERTIES
+#
+ro.secure=1
+ro.allow.mock.location=0
+ro.debuggable=0
+ro.adb.secure=1
+ro.zygote=zygote32
+dalvik.vm.image-dex2oat-Xms=64m
+dalvik.vm.image-dex2oat-Xmx=64m
+dalvik.vm.dex2oat-Xms=64m
+dalvik.vm.dex2oat-Xmx=512m
+ro.dalvik.vm.native.bridge=0
+debug.atrace.tags.enableflags=0
+persist.adb.notify=0
+persist.raft.pump_kmsg=1
+bluetooth.force_pm_timer=2000
+ro.ambient.burn_in_protection=1
+ro.ambient.burn_in_x_offset=0,2,4,6,8,10,10,8,6,4,2,0,-2,-4,-6,-8,-10,-10,-8,-6,-4,-2
+ro.ambient.burn_in_y_offset=0,2,4,4,2,0,-2,-4,-6,-8,-10,-10,-8,-6,-4,-2
+#
+# BOOTIMAGE_BUILD_PROPERTIES
+#
+ro.bootimage.build.date=Sun May 29 19:13:42 UTC 2016
+ro.bootimage.build.date.utc=1464549222
+ro.bootimage.build.fingerprint=asus/sparrow/sparrow:6.0.1/MWD59/2923607:user/release-keys
+persist.sys.usb.config=none
+

@@ -1,0 +1,8 @@
+#
+# init.asus.asdf.rc
+#
+# This is a dummy rc to replace init.asus.asdf.rc for user build.
+#
+
+on property:sys.boot_completed=1
+    write /sys/module/msm_poweroff/parameters/download_mode 0
