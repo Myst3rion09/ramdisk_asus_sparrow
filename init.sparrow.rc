@@ -16,6 +16,19 @@ on boot
 on post-fs-data
     insmod /system/lib/modules/sentral-iio.ko
 
+    # MSM Hotplug
+    write /sys/module/msm_hotplug/enabled 0
+    write /sys/module/msm_hotplug/min_cpus_online 1
+    write /sys/module/msm_hotplug/max_cpus_online 2
+    write /sys/module/msm_hotplug/cpus_boosted 4
+    write /sys/module/msm_hotplug/boost_lock_duration 1000
+    write /sys/module/msm_hotplug/down_lock_duration 20
+    write /sys/module/msm_hotplug/history_size 20
+    write /sys/module/msm_hotplug/update_rates 30
+    write /sys/module/msm_hotplug/fast_lane_load 200
+    write /sys/module/msm_hotplug/offline_load 0
+    write /sys/module/msm_hotplug/io_is_busy 1
+
 service bugreport /system/bin/dumpstate -d -p -B \
         -o /data/data/com.android.shell/files/bugreports/bugreport
     class main
@@ -37,3 +50,8 @@ service iprenew_bt-pan /system/bin/dhcpcd -n
 
 on property:ro.build.type=user
     mount ext4 /dev/block/platform/msm_sdcc.1/by-name/asusdata /factory ro remount
+
+on property:sys.boot_completed=1
+
+    #enable hotplug driver
+    write /sys/module/msm_hotplug/enabled 1
